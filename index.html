@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        input {
+            height: 20px;
+            width: 40px;
+        }
+
+        .box {
+            position: relative;
+            height: 400px;
+            width: 400px;
+            border: 1px solid skyblue;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .row ul {
+            padding: 0;
+            margin: 0;
+            height: 100px;
+            width: 400px;
+            display: block;
+        }
+
+        .silder {
+            width: 400px;
+            height: 500px;
+            position: absolute;
+            top: -280px;
+        }
+
+        .row ul li {
+            height: 100px;
+            width: 100px;
+            border: 1px solid gray;
+            list-style: none;
+            box-sizing: border-box;
+            float: left;
+            border-collapse: collapse;
+            border-right: none;
+        }
+
+        .bl {
+            background-color: black;
+        }
+
+        .white {
+            background-color: #fff;
+        }
+
+        .row ul li:last-child {
+            border-right: 1px solid gray;
+        }
+    </style>
+</head>
+
+<body>
+    得分：<input type="text" value="" disabled>
+    <div class="box">
+        <div class="silder">
+            <div class="row">
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="row">
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="row">
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="row">
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="row">
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 计数器
+        var count = 0;
+        //获取每一行
+        var rows = document.querySelectorAll(".row");
+        //在每一行随机生成黑块
+        for (var i = 0; i < rows.length; i++) {
+            //生成随机数
+            var random = parseInt(Math.random() * 4);
+            //给对应li设为黑色
+            // 获取对应行的所有li
+            var list = rows[i].querySelectorAll("ul li");
+            for (var j = 0; j < list.length; j++) {
+                list[j].onclick = function () {
+                    clearInterval(timer)
+                    alert("踩白块了")
+                    history.go(0);
+                }
+            }
+            // 给其添加颜色
+            list[random].className = "bl"
+            //添加点击方法
+            list[random].onclick = function () {
+                this.className = "wh";
+                count++;
+                document.querySelector("input").value = count;
+                if (count % 3 == 0) {
+                    console.log("111")
+                    fast /= 3;
+                    clearInterval(timer);
+                    timer = setInterval(move, fast)
+                }
+            }
+        }
+        //获取移动的对象
+        function move() {
+            var silder = document.querySelector(".silder");
+            var sTop = parseInt(getComputedStyle(silder).top);
+            silder.style.top = sTop + 1 + "px";
+            //判断
+            if (silder.style.top == "-100px") {
+                var lis = silder.lastElementChild.querySelectorAll("li");
+                for (var i = 0; i < lis.length; i++) {
+                    if (lis[i].className == "bl") {
+                        clearInterval(timer)
+                        alert("游戏结束")
+                        history.go(0);
+                    }
+                }
+
+            }
+            if (silder.style.top == "0px") {
+                //判断游戏是否结束
+                var rs = silder.querySelectorAll(".row");
+                var lis = rs[rs.length - 2].querySelectorAll("li");
+                for (var i = 0; i < lis.length; i++) {
+                    if (lis[i].className == "bl") {
+                        clearInterval(timer)
+                        alert("游戏结束")
+                        history.go(0);
+                    }
+                }
+
+
+                //删除最后,给最前加，重新定位
+                //创建节点
+                var r = document.createElement("div");
+                r.className = "row";
+                r.innerHTML = `
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>   
+                `
+                //生成随机数
+                var random = parseInt(Math.random() * 4);
+                //给对应li设为黑色
+                // 获取对应行的所有li
+                var list = r.querySelectorAll("ul li");
+                for (var i = 0; i < list.length; i++) {
+                    list[i].onclick = function () {
+                        clearInterval(timer)
+                        alert("踩白块了")
+                        history.go(0);
+                    }
+                }
+                // 给其添加颜色
+                list[random].className = "bl"
+                //添加点击方法
+                list[random].onclick = function () {
+                    this.className = "wh";
+                    count++;
+                    document.querySelector("input").value = count;
+                    if (count % 3 == 0) {
+                        console.log("111")
+                        fast = fast / 3;
+                        clearInterval(timer);
+                        timer = setInterval(move, fast)
+                    }
+                }
+                silder.removeChild(silder.lastElementChild);
+                silder.insertBefore(r, silder.firstElementChild);
+                silder.style.top = "-100px";
+            }
+        }
+        var fast = 20;
+        var timer = setInterval(move, fast);
+    </script>
+</body>
+
+</html>
